@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Moje povinnosti</title>
+  <meta name="description" content="Hlídejte platby, smlouvy, výpovědní lhůty, STK a doklady na jednom místě.">
+  <meta name="theme-color" content="#1f6f5c">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-180.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Povinnosti">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1 id="page-title">Přehled</h1>
+  </header>
+
+  <main id="app">
+    <!-- PŘEHLED -->
+    <section id="view-prehled" class="view active">
+      <div class="cards">
+        <div class="stat">
+          <span class="stat-label">Zbývá zaplatit tento měsíc</span>
+          <span class="stat-value" id="stat-mesic">0 Kč</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label" id="stat-vyplata-label">Do výplaty</span>
+          <span class="stat-value" id="stat-vyplata">0 Kč</span>
+        </div>
+      </div>
+      <p class="muted small" id="stat-prumer"></p>
+
+      <div id="upozorneni"></div>
+
+      <h2>Nejbližší termíny</h2>
+      <ul class="list" id="seznam-nejblizsi"></ul>
+      <p class="empty" id="prazdno-prehled" hidden>
+        Zatím tu nic není. Přidejte první povinnost tlačítkem <strong>+</strong> dole.
+      </p>
+    </section>
+
+    <!-- SEZNAM -->
+    <section id="view-seznam" class="view">
+      <div class="filters" id="filtry"></div>
+      <ul class="list" id="seznam-vse"></ul>
+      <p class="empty" id="prazdno-seznam" hidden>Žádné povinnosti v této kategorii.</p>
+    </section>
+
+    <!-- PŘIDAT / UPRAVIT -->
+    <section id="view-pridat" class="view">
+      <div id="sablony">
+        <p class="muted">Vyberte, co chcete hlídat. Formulář se předvyplní.</p>
+        <div class="templates" id="seznam-sablon"></div>
+      </div>
+
+      <form id="formular" hidden>
+        <input type="hidden" id="f-id">
+        <label>Název
+          <input id="f-nazev" required maxlength="60" placeholder="např. Nájem">
+        </label>
+        <label>Kategorie
+          <select id="f-kategorie"></select>
+        </label>
+        <div class="row">
+          <label>Částka (Kč)
+            <input id="f-castka" type="number" min="0" step="1" inputmode="numeric" placeholder="0">
+          </label>
+          <label>Opakování
+            <select id="f-opakovani">
+              <option value="0">Jednorázově</option>
+              <option value="1">Každý měsíc</option>
+              <option value="3">Každé čtvrtletí</option>
+              <option value="6">Každého půl roku</option>
+              <option value="12">Každý rok</option>
+              <option value="24">Každé 2 roky</option>
+            </select>
+          </label>
+        </div>
+        <label><span id="f-datum-label">Datum splatnosti</span>
+          <input id="f-datum" type="date" required>
+        </label>
+
+        <fieldset class="vypoved">
+          <legend>
+            <label class="check"><input type="checkbox" id="f-hlidat-vypoved"> Hlídat výpovědní lhůtu</label>
+          </legend>
+          <div id="vypoved-pole" hidden>
+            <label>Výročí / konec smlouvy nebo fixace
+              <input id="f-vyroci" type="date">
+            </label>
+            <label>Výpověď musí dorazit nejpozději
+              <span class="inline">
+                <input id="f-lhuta" type="number" min="0" step="1" inputmode="numeric" value="6">
+                <select id="f-lhuta-jednotka">
+                  <option value="tydny">týdnů</option>
+                  <option value="dny">dní</option>
+                  <option value="mesice">měsíců</option>
+                </select>
+                předem
+              </span>
+            </label>
+            <p class="hint" id="vypoved-nahled"></p>
+          </div>
+        </fieldset>
+
+        <label>Připomenout předem
+          <select id="f-pripomenout">
+            <option value="1">1 den</option>
+            <option value="3" selected>3 dny</option>
+            <option value="7">7 dní</option>
+            <option value="14">14 dní</option>
+            <option value="30">30 dní</option>
+            <option value="60">60 dní</option>
+          </select>
+        </label>
+        <label>Poznámka
+          <textarea id="f-poznamka" rows="2" maxlength="300" placeholder="např. číslo smlouvy, variabilní symbol"></textarea>
+        </label>
+
+        <div class="actions">
+          <button type="submit" class="btn primary">Uložit</button>
+          <button type="button" class="btn" id="f-zrusit">Zpět</button>
+        </div>
+        <button type="button" class="btn danger full" id="f-smazat" hidden>Smazat povinnost</button>
+      </form>
+    </section>
+
+    <!-- VÝPOVĚĎ -->
+    <section id="view-vypoved" class="view">
+      <p class="hint" id="v-info"></p>
+      <form id="v-form">
+        <h2>Vaše údaje</h2>
+        <label>Jméno a příjmení
+          <input id="v-jmeno" required maxlength="80" autocomplete="name">
+        </label>
+        <label>Adresa
+          <input id="v-adresa" required maxlength="120" autocomplete="street-address" placeholder="Ulice 12, 460 01 Liberec">
+        </label>
+        <label>Datum narození (nepovinné, pojišťovny ho často chtějí)
+          <input id="v-narozeni" type="date">
+        </label>
+        <h2>Smlouva</h2>
+        <label>Komu (název firmy)
+          <input id="v-firma" required maxlength="80" placeholder="např. Kooperativa, ČEZ, O2">
+        </label>
+        <label>Adresa firmy (nepovinné)
+          <input id="v-firma-adresa" maxlength="120">
+        </label>
+        <label>Číslo smlouvy
+          <input id="v-cislo" maxlength="40">
+        </label>
+        <label id="v-extra-wrap"><span id="v-extra-label">Doplňující údaj</span>
+          <input id="v-extra" maxlength="60">
+        </label>
+        <label>Ukončit ke dni
+          <input id="v-ke-dni" type="date" required>
+        </label>
+        <div class="actions">
+          <button type="submit" class="btn primary">Vytvořit výpověď</button>
+          <button type="button" class="btn" id="v-zpet">Zpět</button>
+        </div>
+      </form>
+
+      <div id="v-vysledek" hidden>
+        <div class="letter" id="v-text"></div>
+        <div class="letter-actions">
+          <button type="button" class="btn primary" id="v-kopirovat">Kopírovat text</button>
+          <button type="button" class="btn" id="v-email">Poslat e-mailem</button>
+          <button type="button" class="btn" id="v-tisk">Vytisknout / PDF</button>
+          <button type="button" class="btn" id="v-upravit">Upravit údaje</button>
+        </div>
+        <p class="muted small" id="v-rada"></p>
+        <button type="button" class="btn full" id="v-odeslano">Výpověď jsem odeslal(a)</button>
+      </div>
+    </section>
+
+    <!-- NASTAVENÍ -->
+    <section id="view-nastaveni" class="view">
+      <h2>Výplata</h2>
+      <label>Den v měsíci, kdy chodí výplata
+        <input id="n-vyplata" type="number" min="1" max="31" inputmode="numeric" placeholder="např. 15">
+      </label>
+      <p class="muted small">Podle toho spočítám, kolik musíte zaplatit do příští výplaty.</p>
+
+      <h2>Upozornění</h2>
+      <p class="muted small">
+        Aplikace vás upozorní při otevření. Spolehlivé připomínky i se zavřenou aplikací získáte
+        přidáním termínů do kalendáře v telefonu (tlačítko „Do kalendáře“ u každé položky,
+        nebo všechny najednou níže).
+      </p>
+      <button class="btn full" id="n-notifikace">Povolit upozornění</button>
+      <button class="btn full" id="n-kalendar">Přidat vše do kalendáře (.ics)</button>
+
+      <h2>Záloha dat</h2>
+      <p class="muted small">Data jsou jen ve vašem telefonu. Zálohu si občas stáhněte.</p>
+      <button class="btn full" id="n-export">Stáhnout zálohu</button>
+      <label class="btn full file-btn">Obnovit ze zálohy
+        <input type="file" id="n-import" accept="application/json,.json" hidden>
+      </label>
+      <button class="btn danger full" id="n-smazat-vse">Smazat všechna data</button>
+
+      <h2>Jak nainstalovat</h2>
+      <p class="muted small">
+        <strong>iPhone:</strong> otevřete v Safari → Sdílet → Přidat na plochu.<br>
+        <strong>Android:</strong> otevřete v Chrome → menu ⋮ → Instalovat aplikaci.
+      </p>
+      <p class="muted small">Moje povinnosti · verze 0.3</p>
+    </section>
+  </main>
+
+  <nav class="tabbar">
+    <button data-view="prehled" class="active" aria-label="Přehled">
+      <svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>
+      <span>Přehled</span>
+    </button>
+    <button data-view="seznam" aria-label="Seznam">
+      <svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+      <span>Seznam</span>
+    </button>
+    <button data-view="pridat" class="add" aria-label="Přidat">
+      <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+    </button>
+    <button data-view="nastaveni" aria-label="Nastavení">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+      <span>Nastavení</span>
+    </button>
+  </nav>
+
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
