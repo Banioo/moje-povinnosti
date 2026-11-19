@@ -50,11 +50,31 @@
       <p class="empty" id="prazdno-seznam" hidden>Žádné povinnosti v této kategorii.</p>
     </section>
 
+    <!-- KALENDÁŘ -->
+    <section id="view-kalendar" class="view">
+      <div class="kal-hlava">
+        <button type="button" class="kal-sipka" id="kal-zpet" aria-label="Předchozí měsíc">
+          <svg viewBox="0 0 24 24"><path d="m15 6-6 6 6 6"/></svg>
+        </button>
+        <div class="kal-mesic" id="kal-mesic" aria-live="polite"></div>
+        <button type="button" class="kal-sipka" id="kal-dal" aria-label="Další měsíc">
+          <svg viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg>
+        </button>
+      </div>
+      <p class="muted small kal-soucet" id="kal-soucet"></p>
+      <div class="kal-tyden" aria-hidden="true"><span>Po</span><span>Út</span><span>St</span><span>Čt</span><span>Pá</span><span>So</span><span>Ne</span></div>
+      <div class="kal-mrizka" id="kal-mrizka"></div>
+      <h2 id="kal-den-nadpis"></h2>
+      <ul class="list" id="kal-den-seznam"></ul>
+      <p class="empty" id="kal-den-prazdno" hidden>Tento den nic neplatíte.</p>
+    </section>
+
     <!-- PŘIDAT / UPRAVIT -->
     <section id="view-pridat" class="view">
       <div id="sablony">
         <p class="muted">Vyberte, co chcete hlídat. Formulář se předvyplní.</p>
-        <div class="templates" id="seznam-sablon"></div>
+        <input type="search" id="hledat-sablonu" placeholder="Hledat, např. pojištění, záruka, daň" autocomplete="off" hidden>
+        <div id="seznam-sablon"></div>
       </div>
 
       <form id="formular" hidden>
@@ -89,7 +109,7 @@
             <label class="check"><input type="checkbox" id="f-hlidat-vypoved"> Hlídat výpovědní lhůtu</label>
           </legend>
           <div id="vypoved-pole" hidden>
-            <label>Výročí / konec smlouvy nebo fixace
+            <label><span id="f-vyroci-label">Výročí / konec smlouvy nebo fixace</span>
               <input id="f-vyroci" type="date">
             </label>
             <label>Výpověď musí dorazit nejpozději
@@ -129,55 +149,6 @@
       </form>
     </section>
 
-    <!-- VÝPOVĚĎ -->
-    <section id="view-vypoved" class="view">
-      <p class="hint" id="v-info"></p>
-      <form id="v-form">
-        <h2>Vaše údaje</h2>
-        <label>Jméno a příjmení
-          <input id="v-jmeno" required maxlength="80" autocomplete="name">
-        </label>
-        <label>Adresa
-          <input id="v-adresa" required maxlength="120" autocomplete="street-address" placeholder="Ulice 12, 460 01 Liberec">
-        </label>
-        <label>Datum narození (nepovinné, pojišťovny ho často chtějí)
-          <input id="v-narozeni" type="date">
-        </label>
-        <h2>Smlouva</h2>
-        <label>Komu (název firmy)
-          <input id="v-firma" required maxlength="80" placeholder="např. Kooperativa, ČEZ, O2">
-        </label>
-        <label>Adresa firmy (nepovinné)
-          <input id="v-firma-adresa" maxlength="120">
-        </label>
-        <label>Číslo smlouvy
-          <input id="v-cislo" maxlength="40">
-        </label>
-        <label id="v-extra-wrap"><span id="v-extra-label">Doplňující údaj</span>
-          <input id="v-extra" maxlength="60">
-        </label>
-        <label>Ukončit ke dni
-          <input id="v-ke-dni" type="date" required>
-        </label>
-        <div class="actions">
-          <button type="submit" class="btn primary">Vytvořit výpověď</button>
-          <button type="button" class="btn" id="v-zpet">Zpět</button>
-        </div>
-      </form>
-
-      <div id="v-vysledek" hidden>
-        <div class="letter" id="v-text"></div>
-        <div class="letter-actions">
-          <button type="button" class="btn primary" id="v-kopirovat">Kopírovat text</button>
-          <button type="button" class="btn" id="v-email">Poslat e-mailem</button>
-          <button type="button" class="btn" id="v-tisk">Vytisknout / PDF</button>
-          <button type="button" class="btn" id="v-upravit">Upravit údaje</button>
-        </div>
-        <p class="muted small" id="v-rada"></p>
-        <button type="button" class="btn full" id="v-odeslano">Výpověď jsem odeslal(a)</button>
-      </div>
-    </section>
-
     <!-- NASTAVENÍ -->
     <section id="view-nastaveni" class="view">
       <h2>Výplata</h2>
@@ -215,22 +186,25 @@
       </p>
       </div>
       <p class="muted small"><a href="zasady-ochrany-udaju.html" style="color:var(--brand)">Zásady ochrany osobních údajů</a></p>
-      <p class="muted small">Moje povinnosti · verze 1.0.1</p>
+      <p class="muted small">Moje povinnosti · verze 1.3.2</p>
     </section>
   </main>
 
   <nav class="tabbar" aria-label="Hlavní menu">
-    <span class="tab-ind" aria-hidden="true"></span>
-    <button data-view="prehled" class="active" aria-label="Přehled" title="Přehled">
+    <span class="tabbar-bg" aria-hidden="true"></span>
+    <button data-view="prehled" class="tab active" aria-label="Přehled" title="Přehled">
       <svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></svg>
     </button>
-    <button data-view="seznam" aria-label="Seznam" title="Seznam">
+    <button data-view="seznam" class="tab" aria-label="Seznam" title="Seznam">
       <svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1"/><circle cx="4.5" cy="12" r="1"/><circle cx="4.5" cy="18" r="1"/></svg>
     </button>
-    <button data-view="pridat" aria-label="Přidat" title="Přidat">
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>
+    <button data-view="pridat" class="tab-plus" aria-label="Přidat" title="Přidat">
+      <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
     </button>
-    <button data-view="nastaveni" aria-label="Nastavení" title="Nastavení">
+    <button data-view="kalendar" class="tab" aria-label="Kalendář" title="Kalendář">
+      <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+    </button>
+    <button data-view="nastaveni" class="tab" aria-label="Nastavení" title="Nastavení">
       <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
     </button>
   </nav>
