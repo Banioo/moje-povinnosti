@@ -13,6 +13,7 @@
   --danger-soft: #fbe5e3;
   --ok: #2e7d32;
   --on-brand: #ffffff;
+  --check-img: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m6 12.5 4 4 8-9' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   /* Písmo: základ 16 px × 1,25, zaokrouhleno na násobky 4 */
   --fs-xs: 12px;   /* drobné popisky */
   --fs-sm: 14px;   /* vedlejší text */
@@ -45,6 +46,7 @@
     --danger-soft: #3d1c1a;
     --ok: #7cc77f;
     --on-brand: #0d1a16;
+    --check-img: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m6 12.5 4 4 8-9' fill='none' stroke='%230d1a16' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
     color-scheme: dark;
   }
 }
@@ -62,6 +64,7 @@
     --danger-soft: #3d1c1a;
     --ok: #7cc77f;
     --on-brand: #0d1a16;
+    --check-img: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m6 12.5 4 4 8-9' fill='none' stroke='%230d1a16' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
     color-scheme: dark;
 }
 
@@ -217,6 +220,8 @@ form .actions, form fieldset { margin: 0; }
 input, select, textarea {
   display: block;
   width: 100%;
+  min-width: 0;
+  max-width: 100%;
   min-height: var(--touch);
   margin-top: var(--s2);
   padding: var(--s3);
@@ -228,6 +233,23 @@ input, select, textarea {
   border-radius: var(--radius-ctl);
 }
 ::placeholder { color: var(--muted); opacity: .8; }
+/* Všechna jednořádková pole stejně vysoká (48 px), i datum a výběr na iPhonu */
+input:not([type=checkbox]), select { height: var(--touch); padding-block: 0; }
+textarea { min-height: 96px; resize: vertical; }
+input[type=date] {
+  -webkit-appearance: none; appearance: none;
+  text-align: left; line-height: calc(var(--touch) - 2px);
+}
+input[type=date]::-webkit-date-and-time-value { text-align: left; margin: 0; }
+input[type=date]::-webkit-calendar-picker-indicator { opacity: .6; }
+select {
+  -webkit-appearance: none; appearance: none;
+  padding-right: 44px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m7 10 5 5 5-5' fill='none' stroke='%23889590' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 20px 20px;
+}
 input:focus, select:focus, textarea:focus { outline: 2px solid var(--brand); outline-offset: 1px; }
 .row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s3); }
 .inline { display: flex; align-items: center; gap: var(--s2); margin-top: var(--s2); color: var(--text); }
@@ -236,13 +258,27 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--brand); out
 fieldset.vypoved {
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  padding: var(--s3) var(--pad) var(--s1);
+  padding: var(--s1) var(--pad);
   margin: 0;
   background: var(--surface);
+  min-width: 0;
 }
-fieldset.vypoved legend { padding: 0 var(--s1); }
+/* Nadpis rámečku uvnitř karty, ne na jejím okraji */
+fieldset.vypoved legend { float: left; width: 100%; padding: 0; }
+fieldset.vypoved legend + * { clear: both; }
 .check { display: flex !important; align-items: center; gap: var(--s3); min-height: 44px; color: var(--text) !important; margin: 0 !important; font-weight: 600; }
-.check input { width: 22px; height: 22px; min-height: 0; margin: 0; }
+.check input[type=checkbox] {
+  -webkit-appearance: none; appearance: none;
+  flex: none; width: 24px; height: 24px; min-height: 0;
+  margin: 0; padding: 0;
+  border: 2px solid var(--muted); border-radius: 6px;
+  background: var(--surface);
+  cursor: pointer;
+}
+.check input[type=checkbox]:checked {
+  border-color: var(--brand);
+  background: var(--brand) var(--check-img) center / 18px 18px no-repeat;
+}
 .hint { font-size: var(--fs-sm); color: var(--brand); margin: 0 0 var(--s3); }
 
 /* ===== Tlačítka ===== */
@@ -283,7 +319,7 @@ fieldset.vypoved legend { padding: 0 var(--s1); }
 }
 @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .tabbar {
-    background: color-mix(in srgb, var(--surface) 68%, transparent);
+    background: color-mix(in srgb, var(--surface) 85%, transparent);
     -webkit-backdrop-filter: blur(18px) saturate(1.6);
     backdrop-filter: blur(18px) saturate(1.6);
     border-color: color-mix(in srgb, var(--text) 10%, transparent);
@@ -375,3 +411,14 @@ fieldset.vypoved legend { padding: 0 var(--s1); }
 }
 #vypoved-pole { display: flex; flex-direction: column; gap: var(--s4); padding: var(--s2) 0 var(--s3); }
 #vypoved-pole .hint { margin: 0; }
+
+/* ===== Formulář přes celou obrazovku: lišta se schová, Uložit je vždy dole ===== */
+body.formular .tabbar { display: none; }
+body.formular main { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + var(--s6)); }
+form .actions {
+  position: sticky; bottom: 0; z-index: 4;
+  margin: 0 calc(-1 * var(--s4));
+  padding: var(--s3) var(--s4) calc(var(--s3) + env(safe-area-inset-bottom, 0px));
+  background: var(--bg);
+  border-top: 1px solid var(--line);
+}

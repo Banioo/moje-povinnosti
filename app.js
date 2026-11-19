@@ -912,6 +912,13 @@ function ukazkovaData() {
   ];
 }
 
+// Když je otevřený formulář, schová se spodní lišta (tlačítko Uložit je pak vždy vidět).
+function aktualizujFormular() {
+  const vidim = (sel) => { const el = $(sel); return el && !el.hidden && el.closest('.view').classList.contains('active'); };
+  document.body.classList.toggle('formular', vidim('#formular') || vidim('#v-form'));
+}
+new MutationObserver(aktualizujFormular).observe($('#app'), { subtree: true, attributes: true, attributeFilter: ['hidden', 'class'] });
+
 // ---------- Start ----------
 naplnKategorie();
 if (window.NAHLED) {

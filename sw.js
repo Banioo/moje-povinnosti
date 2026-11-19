@@ -1,6 +1,6 @@
 // Service worker: aplikace funguje i bez internetu.
 // Při každé změně souborů zvyšte číslo verze, aby si telefony stáhly novou verzi.
-const VERZE = 'moje-povinnosti-v10';
+const VERZE = 'moje-povinnosti-v11';
 const SOUBORY = ['./', 'index.html', 'style.css', 'app.js', 'manifest.json', 'zasady-ochrany-udaju.html',
   'icons/icon.svg', 'icons/icon-180.png', 'icons/icon-192.png', 'icons/icon-512.png'];
 
