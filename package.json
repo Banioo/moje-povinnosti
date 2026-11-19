@@ -1,0 +1,17 @@
+{
+  "name": "moje-povinnosti",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Moje povinnosti – mobilní aplikace (Android přes Capacitor)",
+  "dependencies": {
+    "@capacitor/android": "latest",
+    "@capacitor/cli": "latest",
+    "@capacitor/core": "latest",
+    "@capacitor/filesystem": "latest",
+    "@capacitor/local-notifications": "latest",
+    "@capacitor/share": "latest"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "latest"
+  }
+}

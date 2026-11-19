@@ -21,7 +21,7 @@ const IKONY = {
   bydleni: '<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/>',
   energie: '<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>',
   telefon: '<rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/>',
-  predplatne: '<rect x="2" y="5" width="20" height="14" rx="3"/><path d="m10 9 5 3-5 3z"/>',
+  predplatne: '<rect x="2" y="5" width="20" height="14" rx="3"/><path d="m10.5 9 5 3-5 3z"/>',
   pojisteni: '<path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6z"/><path d="m9 12 2 2 4-4"/>',
   auto: '<path d="M5 17H3v-4.5l2-5A2 2 0 0 1 6.9 6h10.2a2 2 0 0 1 1.9 1.5l2 5V17h-2"/><path d="M3 12.5h18"/><circle cx="7.5" cy="17" r="2"/><circle cx="16.5" cy="17" r="2"/><path d="M9.5 17h5"/>',
   doklady: '<rect x="2" y="5" width="20" height="14" rx="2.5"/><circle cx="8" cy="11" r="2"/><path d="M5 16c.5-1.5 1.7-2.3 3-2.3s2.5.8 3 2.3"/><path d="M14 10h5M14 14h3"/>',
@@ -34,25 +34,25 @@ function ikona(kat) {
 
 // typ: 'platba' = něco platím, 'platnost' = hlídám jen datum (STK, doklady)
 const SABLONY = [
-  { nazev: 'Nájem', kategorie: 'bydleni', opakovani: 1, typ: 'platba', popis: 'každý měsíc' },
-  { nazev: 'Mobilní tarif', kategorie: 'telefon', opakovani: 1, typ: 'platba', popis: 'T-Mobile, O2, Vodafone' },
+  { hlavni: true, nazev: 'Nájem', kategorie: 'bydleni', opakovani: 1, typ: 'platba', popis: 'každý měsíc' },
+  { hlavni: true, nazev: 'Mobilní tarif', kategorie: 'telefon', opakovani: 1, typ: 'platba', popis: 'T-Mobile, O2, Vodafone' },
   { nazev: 'Internet', kategorie: 'telefon', opakovani: 1, typ: 'platba', popis: 'každý měsíc' },
-  { nazev: 'Elektřina – zálohy', kategorie: 'energie', opakovani: 1, typ: 'platba', vypoved: { lhuta: 1, jednotka: 'mesice' }, popis: 'zálohy + konec fixace', poznamka: 'Lhůtu před koncem fixace si ověřte ve smlouvě.' },
+  { hlavni: true, nazev: 'Elektřina – zálohy', kategorie: 'energie', opakovani: 1, typ: 'platba', vypoved: { lhuta: 1, jednotka: 'mesice' }, popis: 'zálohy + konec fixace', poznamka: 'Lhůtu před koncem fixace si ověřte ve smlouvě.' },
   { nazev: 'Plyn – zálohy', kategorie: 'energie', opakovani: 1, typ: 'platba', vypoved: { lhuta: 1, jednotka: 'mesice' }, popis: 'zálohy + konec fixace', poznamka: 'Lhůtu před koncem fixace si ověřte ve smlouvě.' },
-  { nazev: 'Netflix', kategorie: 'predplatne', opakovani: 1, typ: 'platba', castka: 259, popis: 'od 259 Kč měsíčně' },
+  { hlavni: true, nazev: 'Netflix', kategorie: 'predplatne', opakovani: 1, typ: 'platba', castka: 259, popis: 'od 259 Kč měsíčně' },
   { nazev: 'Spotify', kategorie: 'predplatne', opakovani: 1, typ: 'platba', castka: 185, popis: '185 Kč měsíčně' },
   { nazev: 'Jiné předplatné', kategorie: 'predplatne', opakovani: 1, typ: 'platba', popis: 'aplikace, cloud, posilovna' },
-  { nazev: 'Povinné ručení', kategorie: 'pojisteni', opakovani: 12, typ: 'platba', vypoved: { lhuta: 6, jednotka: 'tydny' }, popis: 'výpověď 6 týdnů před výročím' },
+  { hlavni: true, nazev: 'Povinné ručení', kategorie: 'pojisteni', opakovani: 12, typ: 'platba', vypoved: { lhuta: 6, jednotka: 'tydny' }, popis: 'výpověď 6 týdnů před výročím' },
   { nazev: 'Havarijní pojištění', kategorie: 'pojisteni', opakovani: 12, typ: 'platba', vypoved: { lhuta: 6, jednotka: 'tydny' }, popis: 'výpověď 6 týdnů před výročím' },
   { nazev: 'Pojištění domácnosti', kategorie: 'pojisteni', opakovani: 12, typ: 'platba', vypoved: { lhuta: 6, jednotka: 'tydny' }, popis: 'výpověď 6 týdnů před výročím' },
-  { nazev: 'STK', kategorie: 'auto', opakovani: 24, typ: 'platnost', popis: 'osobní auto každé 2 roky' },
+  { hlavni: true, nazev: 'STK', kategorie: 'auto', opakovani: 24, typ: 'platnost', popis: 'osobní auto každé 2 roky' },
   { nazev: 'Dálniční známka', kategorie: 'auto', opakovani: 12, typ: 'platba', castka: 2440, popis: 'roční 2 440 Kč' },
   { nazev: 'Servis auta', kategorie: 'auto', opakovani: 12, typ: 'platba', popis: 'olej, prohlídka' },
-  { nazev: 'Občanský průkaz', kategorie: 'doklady', opakovani: 0, typ: 'platnost', popis: 'konec platnosti' },
+  { hlavni: true, nazev: 'Občanský průkaz', kategorie: 'doklady', opakovani: 0, typ: 'platnost', popis: 'konec platnosti' },
   { nazev: 'Cestovní pas', kategorie: 'doklady', opakovani: 0, typ: 'platnost', popis: 'konec platnosti' },
   { nazev: 'Řidičský průkaz', kategorie: 'doklady', opakovani: 0, typ: 'platnost', popis: 'konec platnosti' },
   { nazev: 'Faktura', kategorie: 'faktury', opakovani: 0, typ: 'platba', popis: 'jednorázová splatnost' },
-  { nazev: 'Vlastní', kategorie: 'ostatni', opakovani: 0, typ: 'platba', popis: 'cokoli dalšího' },
+  { hlavni: true, nazev: 'Vlastní', kategorie: 'ostatni', opakovani: 0, typ: 'platba', popis: 'cokoli dalšího' },
 ];
 
 // ---------- Ukládání dat ----------
@@ -72,6 +72,7 @@ function nacti() {
 function uloz() {
   try { localStorage.setItem(KLIC, JSON.stringify(data)); }
   catch (e) { toast('Data se nepodařilo uložit.'); }
+  if (typeof naplanujUpozorneni === 'function') naplanujUpozorneni();
 }
 
 // ---------- Práce s datem ----------
@@ -214,13 +215,135 @@ function textOpakovani(m) {
   return { 0: 'jednorázově', 1: 'měsíčně', 3: 'čtvrtletně', 6: 'pololetně', 12: 'ročně', 24: 'každé 2 roky' }[m] || `každých ${m} měs.`;
 }
 
+// ---------- Spodní lišta: přesun zeleného kroužku ----------
+function nastavTab(view) {
+  const lista = $('.tabbar');
+  let aktivni = null;
+  lista.querySelectorAll('button').forEach((b) => {
+    const je = b.dataset.view === view;
+    b.classList.toggle('active', je);
+    if (je) { aktivni = b; b.setAttribute('aria-current', 'page'); } else b.removeAttribute('aria-current');
+  });
+  lista.classList.toggle('bez-vyberu', !aktivni);
+  if (aktivni) {
+    const x = aktivni.offsetLeft + aktivni.offsetWidth / 2 - 26;
+    lista.style.setProperty('--ind-x', x + 'px');
+  }
+  // První zobrazení bez animace, pak už kroužek přejíždí.
+  if (!lista.classList.contains('pripraveno')) requestAnimationFrame(() => requestAnimationFrame(() => lista.classList.add('pripraveno')));
+}
+window.addEventListener('resize', () => {
+  const a = document.querySelector('.tabbar button.active');
+  if (a) nastavTab(a.dataset.view);
+});
+
+// =========================================================
+// Upozornění přímo v telefonu (jen v aplikaci z Google Play / App Store)
+// Aplikace si připomínky naplánuje sama v telefonu, bez serveru.
+// =========================================================
+const NATIVNI = !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform());
+const PLUGINY = NATIVNI ? window.Capacitor.Plugins : {};
+const HODINA_UPOZORNENI = 9;   // v kolik hodin chodí připomínky
+const MAX_UPOZORNENI = 60;     // telefony mají limit naplánovaných upozornění
+
+function dnyText(n) { return n === 1 ? 'den' : n < 5 ? 'dny' : 'dní'; }
+function vHodinu(d) { const x = new Date(d); x.setHours(HODINA_UPOZORNENI, 0, 0, 0); return x; }
+
+// Seznam upozornění na příští rok, nejbližší první.
+function planUpozorneni(ted = new Date()) {
+  const t = dnes();
+  const konec = new Date(t.getFullYear() + 1, t.getMonth(), t.getDate());
+  const plan = [];
+  aktivni().forEach((p) => {
+    const predem = Number(p.pripomenout) || 3;
+    const castka = p.typ === 'platba' && p.castka > 0 ? ` – ${kc(p.castka)}` : '';
+    vyskyty(p, konec).forEach((d) => {
+      const kdy = vHodinu(new Date(d.getTime() - predem * DEN));
+      if (kdy > ted) {
+        const nadpis = p.typ === 'platnost'
+          ? `Za ${predem} ${dnyText(predem)} končí: ${p.nazev}`
+          : predem === 1 ? `Zítra platíš: ${p.nazev}` : `Za ${predem} ${dnyText(predem)} platíš: ${p.nazev}`;
+        const text = p.typ === 'platnost' ? `Platnost končí ${hezkeDatum(d)}` : `Splatnost ${hezkeDatum(d)}${castka}`;
+        plan.push({ kdy, nadpis, text });
+      }
+      const vDen = vHodinu(d);
+      if (p.typ === 'platba' && vDen > ted) plan.push({ kdy: vDen, nadpis: `Dnes platíš: ${p.nazev}`, text: `Splatnost dnes${castka}` });
+    });
+    const v = vypoved(p);
+    if (v) {
+      [21, 7, 1].forEach((n) => {
+        const kdy = vHodinu(new Date(v.posledniDen.getTime() - n * DEN));
+        if (kdy > ted) plan.push({ kdy, nadpis: `Výpověď: ${p.nazev}`, text: `Výpověď musí dorazit do ${hezkeDatum(v.posledniDen)} (za ${n} ${dnyText(n)}). Jinak se smlouva prodlouží.` });
+      });
+    }
+  });
+  plan.sort((a, b) => a.kdy - b.kdy);
+  return plan.slice(0, MAX_UPOZORNENI);
+}
+
+let _planTimer = null;
+function naplanujUpozorneni() {
+  if (!NATIVNI || !PLUGINY.LocalNotifications) return;
+  clearTimeout(_planTimer);
+  _planTimer = setTimeout(async () => {
+    const LN = PLUGINY.LocalNotifications;
+    try {
+      const perm = await LN.checkPermissions();
+      if (perm.display !== 'granted') return;
+      const cekajici = await LN.getPending();
+      if (cekajici.notifications.length) await LN.cancel({ notifications: cekajici.notifications.map((n) => ({ id: n.id })) });
+      const plan = planUpozorneni();
+      if (plan.length) {
+        await LN.schedule({
+          notifications: plan.map((n, i) => ({
+            id: i + 1, title: n.nadpis, body: n.text,
+            schedule: { at: n.kdy, allowWhileIdle: true },
+          })),
+        });
+      }
+    } catch (e) { console.warn('Upozornění se nepodařilo naplánovat', e); }
+  }, 400);
+}
+
+async function povolUpozorneniNativne(tichy = false) {
+  const LN = PLUGINY.LocalNotifications;
+  if (!LN) return false;
+  try {
+    let perm = await LN.checkPermissions();
+    if (perm.display !== 'granted') perm = await LN.requestPermissions();
+    const ok = perm.display === 'granted';
+    if (!tichy) toast(ok ? 'Upozornění zapnuta' : 'Upozornění jsou vypnutá. Zapnete je v Nastavení telefonu → Aplikace → Moje povinnosti.');
+    if (ok) naplanujUpozorneni();
+    return ok;
+  } catch { return false; }
+}
+
+// Uložení souboru (záloha, kalendář) – v aplikaci přes nabídku Sdílet.
+async function ulozSoubor(jmeno, obsah, typ) {
+  if (NATIVNI && PLUGINY.Filesystem && PLUGINY.Share) {
+    try {
+      const f = await PLUGINY.Filesystem.writeFile({ path: jmeno, data: obsah, directory: 'CACHE', encoding: 'utf8' });
+      await PLUGINY.Share.share({ title: jmeno, url: f.uri, dialogTitle: 'Uložit nebo poslat' });
+    } catch (e) { if (!String(e).includes('cancel')) toast('Soubor se nepodařilo uložit.'); }
+    return;
+  }
+  if (!lzeStahovat()) return;
+  const blob = new Blob([obsah], { type: typ });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = jmeno;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+}
+
 // ---------- Navigace ----------
 const NAZVY = { prehled: 'Přehled', seznam: 'Moje povinnosti', pridat: 'Přidat', nastaveni: 'Nastavení', vypoved: 'Výpověď' };
 function ukaz(view) {
   document.querySelectorAll('.view').forEach((v) => v.classList.toggle('active', v.id === 'view-' + view));
-  document.querySelectorAll('.tabbar button').forEach((b) => b.classList.toggle('active', b.dataset.view === view));
+  nastavTab(view);
   $('#page-title').textContent = NAZVY[view];
-  if (view === 'pridat') zobrazSablony();
+  if (view === 'pridat') { delete $('#seznam-sablon').dataset.vse; zobrazSablony(); }
   if (view === 'prehled') vykresliPrehled();
   if (view === 'seznam') vykresliSeznam();
   if (view === 'nastaveni') $('#n-vyplata').value = data.nastaveni.vyplata || '';
@@ -251,7 +374,8 @@ function radek(p) {
   if (p.hotovo) li.style.opacity = '.55';
   li.innerHTML = `
     <div class="ico k-${KATEGORIE[p.kategorie] ? p.kategorie : 'ostatni'}">${ikona(p.kategorie)}</div>
-    <div><div class="name">${esc(p.nazev)}</div><div class="meta">${meta}</div></div>
+    <div class="name" title="${esc(p.nazev)}">${esc(p.nazev)}</div>
+    <div class="meta">${meta}</div>
     <div class="right"><div class="amount">${castka}</div><div class="when ${tridaKdy}">${textKdy}</div></div>`;
   li.addEventListener('click', (e) => {
     if (e.target.closest('.item-actions')) return;
@@ -263,42 +387,41 @@ function radek(p) {
 }
 
 function akce(p) {
+  // Uspořádání: informace → vedlejší akce stejně velké v řadě → jedna hlavní akce přes celou šířku.
   const box = document.createElement('div');
   box.className = 'item-actions';
-  const btn = (text, fn, cls = '') => {
+  const text = (t, cls) => {
+    const el = document.createElement('p');
+    el.className = cls;
+    el.textContent = t;
+    box.appendChild(el);
+  };
+  const tlacitko = (t, fn, cls = '') => {
     const b = document.createElement('button');
     b.className = 'btn ' + cls;
     b.type = 'button';
-    b.textContent = text;
+    b.textContent = t;
     b.addEventListener('click', fn);
-    box.appendChild(b);
+    return b;
   };
+  const v = vypoved(p);
+  if (v) text(`Výpověď musí dorazit do ${hezkeDatum(v.posledniDen)} (výročí ${hezkeDatum(v.vyroci)}). Odešlete ji raději do ${hezkeDatum(v.odeslatDo)}`, 'hint');
+  if (p.poznamka) text(p.poznamka, 'muted small');
+
+  const vedlejsi = document.createElement('div');
+  vedlejsi.className = 'act-row';
+  if (lzeVypovedet(p) && !p.vypovedOdeslana) vedlejsi.appendChild(tlacitko('Výpověď', () => otevriVypoved(p)));
+  if (p.vypovedOdeslana) vedlejsi.appendChild(tlacitko('Zrušit odeslání', () => { delete p.vypovedOdeslana; uloz(); obnov(); }));
+  vedlejsi.appendChild(tlacitko('Upravit', () => otevriFormular(p)));
+  if (!NATIVNI) vedlejsi.appendChild(tlacitko('Kalendář', () => stahniIcs([p], `${p.nazev}.ics`)));
+  box.appendChild(vedlejsi);
+
   if (!p.hotovo) {
     const textHotovo = p.typ === 'platba' ? 'Zaplaceno' : (p.opakovani ? 'Hotovo, posunout' : 'Vyřízeno');
-    btn(textHotovo, () => oznacHotovo(p), 'primary');
+    box.appendChild(tlacitko(textHotovo, () => oznacHotovo(p), 'primary'));
   } else {
-    btn('Vrátit zpět', () => { p.hotovo = false; uloz(); obnov(); });
+    box.appendChild(tlacitko('Vrátit zpět', () => { p.hotovo = false; uloz(); obnov(); }, 'primary'));
   }
-  if (p.poznamka) {
-    const pozn = document.createElement('p');
-    pozn.className = 'muted small';
-    pozn.style.margin = '0 0 4px';
-    pozn.style.width = '100%';
-    pozn.textContent = p.poznamka;
-    box.prepend(pozn);
-  }
-  const v = vypoved(p);
-  if (v) {
-    const info = document.createElement('p');
-    info.className = 'hint';
-    info.style.width = '100%';
-    info.textContent = `Výpověď musí dorazit do ${hezkeDatum(v.posledniDen)} (výročí ${hezkeDatum(v.vyroci)}). Odešlete ji raději do ${hezkeDatum(v.odeslatDo)}`;
-    box.prepend(info);
-  }
-  if (lzeVypovedet(p) && !p.vypovedOdeslana) btn('Napsat výpověď', () => otevriVypoved(p));
-  if (p.vypovedOdeslana) btn('Zrušit „výpověď odeslána“', () => { delete p.vypovedOdeslana; uloz(); obnov(); });
-  btn('Upravit', () => otevriFormular(p));
-  btn('Do kalendáře', () => stahniIcs([p], `${p.nazev}.ics`));
   return box;
 }
 
@@ -399,7 +522,10 @@ function zobrazSablony() {
   $('#formular').hidden = true;
   const box = $('#seznam-sablon');
   box.innerHTML = '';
-  SABLONY.forEach((s) => {
+  // Nejdřív jen nejčastější šablony, ostatní po rozbalení.
+  const vse = box.dataset.vse === '1';
+  const zobrazit = vse ? SABLONY : SABLONY.filter((s) => s.hlavni);
+  zobrazit.forEach((s) => {
     const b = document.createElement('button');
     b.type = 'button';
     b.className = 'tpl';
@@ -407,6 +533,14 @@ function zobrazSablony() {
     b.addEventListener('click', () => otevriFormular(null, s));
     box.appendChild(b);
   });
+  if (!vse) {
+    const dalsi = document.createElement('button');
+    dalsi.type = 'button';
+    dalsi.className = 'btn full tpl-more';
+    dalsi.textContent = `Další šablony (${SABLONY.length - zobrazit.length})`;
+    dalsi.addEventListener('click', () => { box.dataset.vse = '1'; zobrazSablony(); });
+    box.appendChild(dalsi);
+  }
 }
 
 function naplnKategorie() {
@@ -444,7 +578,7 @@ function otevriFormular(polozka, sablona) {
 }
 function ukazJenFormular() {
   document.querySelectorAll('.view').forEach((v) => v.classList.toggle('active', v.id === 'view-pridat'));
-  document.querySelectorAll('.tabbar button').forEach((b) => b.classList.toggle('active', b.dataset.view === 'pridat'));
+  nastavTab('pridat');
   $('#sablony').hidden = true;
   $('#formular').hidden = false;
   window.scrollTo(0, 0);
@@ -495,6 +629,7 @@ $('#formular').addEventListener('submit', (e) => {
   if (i >= 0) data.polozky[i] = p; else data.polozky.push(p);
   uloz();
   toast(id ? 'Uloženo' : 'Přidáno');
+  if (NATIVNI && !id) povolUpozorneniNativne(true);
   ukaz('prehled');
 });
 
@@ -531,7 +666,7 @@ let vypovedPolozka = null;
 function otevriVypoved(p) {
   vypovedPolozka = p;
   document.querySelectorAll('.view').forEach((v) => v.classList.toggle('active', v.id === 'view-vypoved'));
-  document.querySelectorAll('.tabbar button').forEach((b) => b.classList.remove('active'));
+  nastavTab(null);
   $('#page-title').textContent = 'Výpověď: ' + p.nazev;
   const o = data.nastaveni.osoba || {};
   $('#v-jmeno').value = o.jmeno || '';
@@ -626,7 +761,11 @@ $('#v-kopirovat').addEventListener('click', async () => {
 $('#v-email').addEventListener('click', () => {
   location.href = `mailto:?subject=${encodeURIComponent(posledniVypoved.vec)}&body=${encodeURIComponent(posledniVypoved.text)}`;
 });
-$('#v-tisk').addEventListener('click', () => {
+$('#v-tisk').addEventListener('click', async () => {
+  if (NATIVNI && PLUGINY.Share) {
+    try { await PLUGINY.Share.share({ title: posledniVypoved.vec, text: posledniVypoved.text, dialogTitle: 'Poslat výpověď' }); } catch {}
+    return;
+  }
   if (window.NAHLED) { toast('V náhledu tisk nefunguje. V nainstalované aplikaci ano.'); return; }
   window.print();
 });
@@ -664,7 +803,6 @@ function udalost(uid, datum, nazev, popis, dniPredem, opakovani) {
   return radky;
 }
 function stahniIcs(polozky, jmeno) {
-  if (!lzeStahovat()) return;
   const radky = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Moje povinnosti//CS', 'CALSCALE:GREGORIAN'];
   polozky.filter((p) => !p.hotovo).forEach((p) => {
     const castka = p.typ === 'platba' && p.castka ? ` – ${kc(p.castka)}` : '';
@@ -677,13 +815,7 @@ function stahniIcs(polozky, jmeno) {
     }
   });
   radky.push('END:VCALENDAR');
-  const blob = new Blob([radky.join('\r\n')], { type: 'text/calendar;charset=utf-8' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = jmeno.replace(/[^\p{L}\p{N} ._-]/gu, '') || 'povinnosti.ics';
-  document.body.appendChild(a);
-  a.click();
-  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  ulozSoubor(jmeno.replace(/[^\p{L}\p{N} ._-]/gu, '') || 'povinnosti.ics', radky.join('\r\n'), 'text/calendar;charset=utf-8');
 }
 
 // ---------- Nastavení ----------
@@ -699,14 +831,7 @@ $('#n-kalendar').addEventListener('click', () => {
   stahniIcs(aktivni(), 'moje-povinnosti.ics');
 });
 $('#n-export').addEventListener('click', () => {
-  if (!lzeStahovat()) return;
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `moje-povinnosti-zaloha-${naText(dnes())}.json`;
-  document.body.appendChild(a);
-  a.click();
-  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  ulozSoubor(`moje-povinnosti-zaloha-${naText(dnes())}.json`, JSON.stringify(data, null, 2), 'application/json');
 });
 $('#n-import').addEventListener('change', async (e) => {
   const soubor = e.target.files[0];
@@ -730,6 +855,7 @@ $('#n-smazat-vse').addEventListener('click', async () => {
   ukaz('prehled');
 });
 $('#n-notifikace').addEventListener('click', async () => {
+  if (NATIVNI) { povolUpozorneniNativne(); return; }
   if (!('Notification' in window)) { toast('Tento prohlížeč upozornění nepodporuje. Na iPhonu nejdřív přidejte aplikaci na plochu.'); return; }
   const r = await Notification.requestPermission();
   toast(r === 'granted' ? 'Upozornění povolena' : 'Upozornění nejsou povolena');
@@ -795,8 +921,19 @@ if (window.NAHLED) {
   b.textContent = 'Náhled s ukázkovými daty. Klidně je upravte nebo smažte v Nastavení.';
   $('#app').prepend(b);
 }
+// V nainstalované aplikaci (z obchodu nebo z plochy) návod k instalaci nepotřebujeme.
+const NAINSTALOVANO = NATIVNI || window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+$('#n-instalace').hidden = NAINSTALOVANO;
+if (NATIVNI) {
+  $('#n-upoz-nativni').hidden = false;
+  $('#n-upoz-web').hidden = true;
+  $('#n-kalendar').hidden = true;
+  $('#n-notifikace').textContent = 'Zapnout upozornění';
+  $('#v-tisk').textContent = 'Sdílet';
+  naplanujUpozorneni();
+}
 ukaz('prehled');
-zkontrolujUpozorneni();
-if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+if (!NATIVNI) zkontrolujUpozorneni();
+if (!NATIVNI && 'serviceWorker' in navigator && location.protocol.startsWith('http')) {
   navigator.serviceWorker.register('sw.js').catch(() => {});
 }

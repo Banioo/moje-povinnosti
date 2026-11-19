@@ -187,7 +187,11 @@
       <p class="muted small">Podle toho spočítám, kolik musíte zaplatit do příští výplaty.</p>
 
       <h2>Upozornění</h2>
-      <p class="muted small">
+      <p class="muted small" id="n-upoz-nativni" hidden>
+        Aplikace vám v 9:00 připomene platby, konce platnosti i poslední dny pro výpověď,
+        i když je zavřená. Kolik dní předem, nastavíte u každé položky.
+      </p>
+      <p class="muted small" id="n-upoz-web">
         Aplikace vás upozorní při otevření. Spolehlivé připomínky i se zavřenou aplikací získáte
         přidáním termínů do kalendáře v telefonu (tlačítko „Do kalendáře“ u každé položky,
         nebo všechny najednou níže).
@@ -203,30 +207,31 @@
       </label>
       <button class="btn danger full" id="n-smazat-vse">Smazat všechna data</button>
 
+      <div id="n-instalace">
       <h2>Jak nainstalovat</h2>
       <p class="muted small">
         <strong>iPhone:</strong> otevřete v Safari → Sdílet → Přidat na plochu.<br>
         <strong>Android:</strong> otevřete v Chrome → menu ⋮ → Instalovat aplikaci.
       </p>
-      <p class="muted small">Moje povinnosti · verze 0.3</p>
+      </div>
+      <p class="muted small"><a href="zasady-ochrany-udaju.html" style="color:var(--brand)">Zásady ochrany osobních údajů</a></p>
+      <p class="muted small">Moje povinnosti · verze 1.0</p>
     </section>
   </main>
 
-  <nav class="tabbar">
-    <button data-view="prehled" class="active" aria-label="Přehled">
-      <svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>
-      <span>Přehled</span>
+  <nav class="tabbar" aria-label="Hlavní menu">
+    <span class="tab-ind" aria-hidden="true"></span>
+    <button data-view="prehled" class="active" aria-label="Přehled" title="Přehled">
+      <svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></svg>
     </button>
-    <button data-view="seznam" aria-label="Seznam">
-      <svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
-      <span>Seznam</span>
+    <button data-view="seznam" aria-label="Seznam" title="Seznam">
+      <svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1"/><circle cx="4.5" cy="12" r="1"/><circle cx="4.5" cy="18" r="1"/></svg>
     </button>
-    <button data-view="pridat" class="add" aria-label="Přidat">
-      <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+    <button data-view="pridat" aria-label="Přidat" title="Přidat">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>
     </button>
-    <button data-view="nastaveni" aria-label="Nastavení">
+    <button data-view="nastaveni" aria-label="Nastavení" title="Nastavení">
       <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
-      <span>Nastavení</span>
     </button>
   </nav>
 

@@ -1,0 +1,63 @@
+# Sestaví aplikaci pro Android na serverech GitHubu.
+# Spustí se sama po každém nahrání souborů, nebo ručně: záložka Actions → Android aplikace → Run workflow.
+# Hotová aplikace (soubor .apk) je pak dole na stránce běhu v části „Artifacts“.
+name: Android aplikace
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Stáhnout soubory z repozitáře
+        uses: actions/checkout@v4
+
+      - name: Připravit Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Připravit Javu
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Nainstalovat Capacitor
+        run: npm install --no-audit --no-fund
+
+      - name: Připravit webové soubory aplikace
+        run: |
+          rm -rf www && mkdir www
+          cp -r index.html style.css app.js manifest.json zasady-ochrany-udaju.html icons www/
+
+      - name: Vytvořit projekt pro Android
+        run: npx cap add android
+
+      - name: Vygenerovat ikony a úvodní obrazovku
+        run: npx capacitor-assets generate --android
+
+      - name: Přidat ikonu a oprávnění pro upozornění
+        run: |
+          cp -r native/android/res/. android/app/src/main/res/
+          M=android/app/src/main/AndroidManifest.xml
+          grep -q POST_NOTIFICATIONS "$M" || sed -i 's#</manifest>#    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />\n</manifest>#' "$M"
+
+      - name: Synchronizovat
+        run: npx cap sync android
+
+      - name: Sestavit aplikaci (APK)
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+
+      - name: Uložit hotovou aplikaci
+        uses: actions/upload-artifact@v4
+        with:
+          name: moje-povinnosti-android
+          path: android/app/build/outputs/apk/debug/*.apk
+          retention-days: 30

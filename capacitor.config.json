@@ -1,0 +1,14 @@
+{
+  "appId": "cz.banioo.mojepovinnosti",
+  "appName": "Moje povinnosti",
+  "webDir": "www",
+  "android": {
+    "backgroundColor": "#f4f6f3"
+  },
+  "plugins": {
+    "LocalNotifications": {
+      "smallIcon": "ic_stat_povinnosti",
+      "iconColor": "#1f6f5c"
+    }
+  }
+}
