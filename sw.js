@@ -1,7 +1,7 @@
 // Service worker: aplikace funguje i bez internetu.
 // Postup „nejdřív síť“: s internetem se vždy načte nejnovější verze z webu,
 // uložená kopie se použije jen bez internetu. Nové verze se tak projeví hned.
-const VERZE = 'moje-povinnosti-v16';
+const VERZE = 'moje-povinnosti-v17';
 const SOUBORY = ['./', 'index.html', 'style.css', 'app.js', 'manifest.json', 'zasady-ochrany-udaju.html',
   'icons/icon.svg', 'icons/icon-180.png', 'icons/icon-192.png', 'icons/icon-512.png'];
 

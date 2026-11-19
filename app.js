@@ -494,29 +494,77 @@ function vykresliPrehled() {
   const prumer = prumerMesicne();
   $('#stat-prumer').textContent = prumer > 0 ? `Pravidelné platby vás stojí průměrně ${kc(prumer)} měsíčně.` : '';
 
-  // Upozornění
+  // Upozornění: karta s ikonou, nadpisem a řádky položek
   const box = $('#upozorneni');
   box.innerHTML = '';
-  const pridej = (cls, nadpis, text) => {
-    const div = document.createElement('div');
-    div.className = 'alert ' + cls;
-    div.innerHTML = `<strong>${nadpis}</strong>${text}`;
-    box.appendChild(div);
+  const IKONA_POZOR = '<path d="M12 8v5"/><circle cx="12" cy="16.5" r=".6" fill="currentColor"/><circle cx="12" cy="12" r="9"/>';
+  const IKONA_SMLOUVA = '<path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h4"/>';
+  const IKONA_DOKLAD = '<rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="9" cy="11" r="2"/><path d="M6 16c.5-1.4 1.6-2.1 3-2.1s2.5.7 3 2.1M15 10h3M15 14h2"/>';
+  // „ · za 3 dny“ jen když je to blízko, jinak by se datum opakovalo
+  const zaKolik = (d) => { const n = rozdilDni(d, t); return n <= 14 ? ` · ${kdy(d)}` : ''; };
+  const karta = (cls, ikonaSvg, nadpis, popis, radky) => {
+    const el = document.createElement('section');
+    el.className = 'alert ' + cls;
+    el.innerHTML = `
+      <div class="alert-ico"><svg viewBox="0 0 24 24" aria-hidden="true">${ikonaSvg}</svg></div>
+      <div class="alert-obsah">
+        <div class="alert-nadpis">${nadpis}</div>
+        ${popis ? `<p class="alert-popis">${popis}</p>` : ''}
+      </div>
+      <ul class="alert-radky"></ul>`;
+    const ulA = el.querySelector('.alert-radky');
+    radky.forEach(({ p, vlevo, vpravo, akce }) => {
+      const li = document.createElement('li');
+      li.innerHTML = `<div class="ar-text"><span class="ar-nazev">${esc(p.nazev)}</span><span class="ar-meta">${vpravo ? `<b>${vpravo}</b> · ` : ''}${vlevo}</span></div>`;
+      if (akce) {
+        const b = document.createElement('button');
+        b.type = 'button'; b.className = 'ar-btn'; b.textContent = akce.text;
+        b.addEventListener('click', akce.fn);
+        li.appendChild(b);
+      }
+      ulA.appendChild(li);
+    });
+    if (!radky.length) ulA.remove();
+    box.appendChild(el);
   };
-  const po = aktivni().filter((p) => p.typ !== 'platnost' && zText(p.datum) < t);
-  if (po.length) pridej('danger', 'Po termínu', po.map((p) => `${esc(p.nazev)} (${hezkeDatum(zText(p.datum))})`).join(', '));
 
-  aktivni().forEach((p) => {
-    const v = vypoved(p);
-    if (!v) return;
-    const zbyva = rozdilDni(v.posledniDen, t);
-    if (zbyva <= 45) {
-      pridej(zbyva <= 7 ? 'danger' : '', `Výpověď: ${esc(p.nazev)}`,
-        `Pokud chcete změnit nebo zrušit, výpověď musí dorazit do ${hezkeDatum(v.posledniDen)} (${kdy(v.posledniDen)}). Jinak se smlouva prodlouží.`);
-    }
-  });
-  const konci = aktivni().filter((p) => p.typ === 'platnost' && rozdilDni(zText(p.datum), t) <= 60);
-  if (konci.length) pridej('', 'Končí platnost', konci.map((p) => `${esc(p.nazev)} ${zText(p.datum) < t ? 'už skončila' : 'do ' + hezkeDatum(zText(p.datum))}`).join(', '));
+  // 1) Po termínu – nejstarší první, s tlačítkem Zaplaceno / Hotovo
+  const po = aktivni().filter((p) => p.typ !== 'platnost' && zText(p.datum) < t)
+    .sort((a, b) => zText(a.datum) - zText(b.datum));
+  if (po.length) {
+    const dluh = po.reduce((s, p) => s + (p.castka || 0), 0);
+    karta('danger', IKONA_POZOR,
+      po.length === 1 ? 'Jedna platba je po termínu' : `${po.length} ${po.length < 5 ? 'platby jsou' : 'plateb je'} po termínu`,
+      dluh > 0 ? `Celkem ${kc(dluh)}` : '',
+      po.map((p) => {
+        const dny = rozdilDni(t, zText(p.datum));
+        return {
+          p,
+          vlevo: dny === 1 ? 'včera' : `před ${dny} dny`,
+          vpravo: p.castka > 0 ? kc(p.castka) : '',
+          akce: { text: p.typ === 'platba' ? 'Zaplaceno' : 'Hotovo', fn: () => oznacHotovo(p) },
+        };
+      }));
+  }
+
+  // 2) Výpovědní lhůty do 45 dní
+  const lhuty = aktivni().map((p) => ({ p, v: vypoved(p) })).filter(({ v }) => v && rozdilDni(v.posledniDen, t) <= 45)
+    .sort((a, b) => a.v.posledniDen - b.v.posledniDen);
+  if (lhuty.length) {
+    const nejblizsi = rozdilDni(lhuty[0].v.posledniDen, t);
+    karta(nejblizsi <= 7 ? 'danger' : 'warn', IKONA_SMLOUVA,
+      lhuty.length === 1 ? 'Blíží se výpovědní lhůta' : 'Blíží se výpovědní lhůty',
+      'Chcete-li smlouvu změnit nebo zrušit, výpověď musí dorazit včas. Jinak se prodlouží.',
+      lhuty.map(({ p, v }) => ({ p, vlevo: `výpověď do ${hezkeDatum(v.posledniDen)}${zaKolik(v.posledniDen)}` })));
+  }
+
+  // 3) Končící doklady a STK do 60 dní
+  const konci = aktivni().filter((p) => p.typ === 'platnost' && rozdilDni(zText(p.datum), t) <= 60)
+    .sort((a, b) => zText(a.datum) - zText(b.datum));
+  if (konci.length) {
+    karta('warn', IKONA_DOKLAD, konci.length === 1 ? 'Brzy končí platnost' : 'Brzy končí platnost dokladů', '',
+      konci.map((p) => ({ p, vlevo: zText(p.datum) < t ? 'platnost už skončila' : `platí do ${hezkeDatum(zText(p.datum))}${zaKolik(zText(p.datum))}` })));
+  }
 
   // Nejbližší termíny
   const ul = $('#seznam-nejblizsi');
